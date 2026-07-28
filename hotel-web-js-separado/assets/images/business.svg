@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0f4c5c"/><stop offset="1" stop-color="#8ad4df"/></linearGradient></defs>
+<rect width="1200" height="700" fill="url(#g)"/>
+<rect x="120" y="140" width="960" height="420" rx="30" fill="#fff" opacity=".93"/>
+<rect x="170" y="190" width="400" height="260" rx="16" fill="#8ad4df" opacity=".38"/>
+<rect x="620" y="220" width="360" height="65" rx="12" fill="#0f4c5c" opacity=".65"/>
+<rect x="620" y="320" width="280" height="28" rx="10" fill="#8ad4df" opacity=".5"/>
+<rect x="620" y="375" width="320" height="28" rx="10" fill="#8ad4df" opacity=".35"/>
+<text x="600" y="630" text-anchor="middle" font-family="Arial" font-weight="700" font-size="58" fill="#fff">Business</text>
+</svg>
