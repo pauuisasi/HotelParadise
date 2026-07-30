@@ -25,7 +25,8 @@ export const ROOMS = [
       "./assets/images/JuniorSuite/jun1.jpeg",
       "./assets/images/JuniorSuite/jun2.jpeg",
       "./assets/images/JuniorSuite/jun3.jpeg",
-      "./assets/images/JuniorSuite/jun4.jpeg"
+      "./assets/images/JuniorSuite/jun4.jpeg",
+      "./assets/images/JuniorSuite/jun5.jpeg"
     ],
 
     features: [
@@ -71,7 +72,8 @@ export const ROOMS = [
       "./assets/images/Simple/simple2.jpeg",
       "./assets/images/Simple/simple3.jpeg",
       "./assets/images/Simple/simple4.jpeg",
-      "./assets/images/Simple/simple5.jpeg"
+      "./assets/images/Simple/simple5.jpeg",
+      "./assets/images/Simple/simple6.jpeg"
     ],
 
     features: [
