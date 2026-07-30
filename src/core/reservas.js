@@ -236,7 +236,7 @@ export function crearReserva({
     nights: noches,
     extras,
     total,
-    status: "Pendiente",
+    status: "Confirmada",
     createdAt: new Date().toISOString()
   };
 }
@@ -248,13 +248,6 @@ export function puedeCancelarReserva(reserva) {
 
   if (reserva.status === "Cancelada") {
     return { permitido: false, mensaje: "La reserva ya está cancelada." };
-  }
-
-  if (reserva.status === "Finalizada") {
-    return {
-      permitido: false,
-      mensaje: "Una reserva finalizada no puede cancelarse."
-    };
   }
 
   return { permitido: true, mensaje: "" };

@@ -775,27 +775,15 @@ function crearHTMLReserva(reserva, esAdministrador = false) {
 
       <div class="actions">
         ${
-          reserva.status !== "Cancelada" &&
-          reserva.status !== "Finalizada"
+          esAdministrador && reserva.status !== "Cancelada"
             ? `
+            <div class="actions">
               <button
                 class="btn-small btn-danger cancel-reservation"
                 data-id="${reserva.id}">
                 Cancelar
               </button>
-            `
-            : ""
-        }
-
-        ${
-          esAdministrador &&
-          reserva.status === "Pendiente"
-            ? `
-              <button
-                class="btn-small confirm-reservation"
-                data-id="${reserva.id}">
-                Confirmar
-              </button>
+            </div>
             `
             : ""
         }
@@ -1101,13 +1089,6 @@ function configurarEventos() {
       cambiarEstadoReserva(
         evento.target.dataset.id,
         "Cancelada"
-      );
-    }
-
-    if (evento.target.classList.contains("confirm-reservation")) {
-      cambiarEstadoReserva(
-        evento.target.dataset.id,
-        "Confirmada"
       );
     }
 
