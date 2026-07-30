@@ -10,6 +10,7 @@
  * - Recibe datos, aplica reglas y devuelve resultados.
  */
 
+
 export const ROOMS = [
   {
     id: "junior",
@@ -17,28 +18,71 @@ export const ROOMS = [
     price: 120,
     capacity: 3,
     total: 5,
-    image: "assets/images/junior-suite.svg",
-    features: ["Living integrado", "Mayor tamaño", "Más comodidades"]
+
+    image: "./assets/images/JuniorSuite/jun1.jpeg",
+
+    images: [
+      "./assets/images/JuniorSuite/jun1.jpeg",
+      "./assets/images/JuniorSuite/jun2.jpeg",
+      "./assets/images/JuniorSuite/jun3.jpeg",
+      "./assets/images/JuniorSuite/jun4.jpeg"
+    ],
+
+    features: [
+      "Living integrado",
+      "Mayor tamaño",
+      "Más comodidades"
+    ]
   },
-  {
-    id: "business",
-    name: "Business",
-    price: 90,
-    capacity: 3,
-    total: 10,
-    image: "assets/images/business.svg",
-    features: ["Escritorio", "Ideal para trabajo", "Baño privado"]
-  },
+
+{
+  id: "business",
+  name: "Business",
+  price: 90,
+  capacity: 3,
+  total: 10,
+
+  image: "./assets/images/bussines/jun1.jpeg",
+
+  images: [
+    "./assets/images/bussines/jun1.jpeg",
+    "./assets/images/bussines/jun2.jpeg",
+    "./assets/images/bussines/jun3.jpeg"
+  ],
+
+  features: [
+    "Escritorio",
+    "Ideal para trabajo",
+    "Baño privado"
+  ]
+},
+
   {
     id: "simple",
     name: "Simple",
     price: 75,
     capacity: 2,
     total: 15,
-    image: "assets/images/simple.svg",
-    features: ["Habitación estándar", "Económica", "Para 1 o 2 personas"]
+
+    image: "./assets/images/Simple/simple1.jpeg",
+
+    images: [
+      "./assets/images/Simple/simple3.jpeg",
+      "./assets/images/Simple/simple2.jpeg",
+      "./assets/images/Simple/simple3.jpeg",
+      "./assets/images/Simple/simple4.jpeg",
+      "./assets/images/Simple/simple5.jpeg"
+    ],
+
+    features: [
+      "Habitación estándar",
+      "Económica",
+      "Para 1 o 2 personas"
+    ]
   }
-];
+]; 
+
+
 
 export function validarFechas(fechaIngreso, fechaSalida, fechaActual) {
   if (!fechaIngreso || !fechaSalida) {

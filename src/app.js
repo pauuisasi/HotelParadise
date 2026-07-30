@@ -91,48 +91,263 @@ function escaparHTML(texto) {
     })[caracter]
   );
 }
+function obtenerImagenesHabitacion(habitacion) {
+  if (
+    Array.isArray(habitacion.images) &&
+    habitacion.images.length > 0
+  ) {
+    return habitacion.images;
+  }
 
+  return habitacion.image ? [habitacion.image] : [];
+}
+
+function actualizarCarruselTarjeta(carrusel, nuevoIndice) {
+  const roomId = carrusel.dataset.room;
+
+  const habitacion = ROOMS.find(
+    (item) => item.id === roomId
+  );
+
+  if (!habitacion) {
+    return;
+  }
+
+  const imagenes = obtenerImagenesHabitacion(habitacion);
+
+  if (imagenes.length === 0) {
+    return;
+  }
+
+  const indice =
+    ((nuevoIndice % imagenes.length) + imagenes.length) %
+    imagenes.length;
+
+  carrusel.dataset.index = String(indice);
+
+  const imagen = carrusel.querySelector(
+    ".room-carousel-image"
+  );
+
+  const contador = carrusel.querySelector(
+    ".room-carousel-counter"
+  );
+
+  imagen.src = imagenes[indice];
+  imagen.alt =
+    `${habitacion.name} - imagen ${indice + 1}`;
+
+  if (contador) {
+    contador.textContent =
+      `${indice + 1} / ${imagenes.length}`;
+  }
+
+  carrusel
+    .querySelectorAll(".room-carousel-dot")
+    .forEach((punto, posicion) => {
+      punto.classList.toggle(
+        "active",
+        posicion === indice
+      );
+    });
+} 
+function configurarCarruselesTarjetas() {
+  $$(".room-image-carousel").forEach((carrusel) => {
+    const botonAnterior = carrusel.querySelector(
+      ".room-carousel-prev"
+    );
+
+    const botonSiguiente = carrusel.querySelector(
+      ".room-carousel-next"
+    );
+
+    const puntos = carrusel.querySelectorAll(
+      ".room-carousel-dot"
+    );
+
+    botonAnterior?.addEventListener("click", (evento) => {
+      evento.preventDefault();
+      evento.stopPropagation();
+
+      const indiceActual = Number(
+        carrusel.dataset.index || 0
+      );
+
+      actualizarCarruselTarjeta(
+        carrusel,
+        indiceActual - 1
+      );
+    });
+
+    botonSiguiente?.addEventListener("click", (evento) => {
+      evento.preventDefault();
+      evento.stopPropagation();
+
+      const indiceActual = Number(
+        carrusel.dataset.index || 0
+      );
+
+      actualizarCarruselTarjeta(
+        carrusel,
+        indiceActual + 1
+      );
+    });
+
+    puntos.forEach((punto) => {
+      punto.addEventListener("click", (evento) => {
+        evento.preventDefault();
+        evento.stopPropagation();
+
+        actualizarCarruselTarjeta(
+          carrusel,
+          Number(punto.dataset.index)
+        );
+      });
+    });
+  });
+}
+function moverCarruselTarjeta(roomId, direccion) {
+  const carrusel = document.querySelector(
+    `.room-image-carousel[data-room="${roomId}"]`
+  );
+
+  if (!carrusel) {
+    return;
+  }
+
+  const indiceActual = Number(
+    carrusel.dataset.index || 0
+  );
+
+  actualizarCarruselTarjeta(
+    carrusel,
+    indiceActual + direccion
+  );
+}
 function renderizarHabitaciones() {
   $("#roomsContainer").innerHTML = ROOMS.map(
-    (habitacion) => `
-      <article class="room-card">
-        <div
-          class="room-image"
-          style="background-image:url('${habitacion.image}')">
-        </div>
+    (habitacion) => {
+      const imagenes =
+        obtenerImagenesHabitacion(habitacion);
 
-        <div class="room-content">
-          <div class="room-top">
-            <h3>${habitacion.name}</h3>
-            <span class="badge">
-              ${habitacion.total} disponibles inicialmente
-            </span>
+      return `
+        <article class="room-card">
+
+          <div
+            class="room-image room-image-carousel"
+            data-room="${habitacion.id}"
+            data-index="0">
+
+            <img
+              class="room-carousel-image"
+              src="${imagenes[0] || ""}"
+              alt="${habitacion.name} - imagen 1">
+
+            ${
+              imagenes.length > 1
+                ? `
+                  <button
+                    type="button"
+                    class="
+                      room-carousel-arrow
+                      room-carousel-prev
+                    "
+                    data-room="${habitacion.id}"
+                    aria-label="
+                      Ver imagen anterior de
+                      ${habitacion.name}
+                    ">
+                    ‹
+                  </button>
+
+                  <button
+                    type="button"
+                    class="
+                      room-carousel-arrow
+                      room-carousel-next
+                    "
+                    data-room="${habitacion.id}"
+                    aria-label="
+                      Ver imagen siguiente de
+                      ${habitacion.name}
+                    ">
+                    ›
+                  </button>
+
+                  <span class="room-carousel-counter">
+                    1 / ${imagenes.length}
+                  </span>
+
+                  <div class="room-carousel-dots">
+
+                    ${imagenes.map(
+                      (_, indice) => `
+                        <button
+                          type="button"
+                          class="room-carousel-dot ${
+                            indice === 0
+                              ? "active"
+                              : ""
+                          }"
+                          data-room="${habitacion.id}"
+                          data-index="${indice}"
+                          aria-label="
+                            Ver imagen ${indice + 1}
+                            de ${habitacion.name}
+                          ">
+                        </button>
+                      `
+                    ).join("")}
+
+                  </div>
+                `
+                : ""
+            }
+
           </div>
 
-          <p class="price">
-            USD ${habitacion.price} / noche
-          </p>
+          <div class="room-content">
 
-          <div class="capacity">
-            👥 Hasta ${habitacion.capacity} personas
+            <div class="room-top">
+              <h3>${habitacion.name}</h3>
+
+              <span class="badge">
+                ${habitacion.total}
+                disponibles inicialmente
+              </span>
+            </div>
+
+            <p class="price">
+              USD ${habitacion.price} / noche
+            </p>
+
+            <div class="capacity">
+              👥 Hasta ${habitacion.capacity} personas
+            </div>
+
+            <ul>
+              ${habitacion.features
+                .map(
+                  (caracteristica) =>
+                    `<li>${caracteristica}</li>`
+                )
+                .join("")}
+            </ul>
+
+            <button
+              class="btn-primary room-reserve"
+              data-room="${habitacion.id}">
+              Consultar y reservar
+            </button>
+
           </div>
-
-          <ul>
-            ${habitacion.features
-              .map((caracteristica) => `<li>${caracteristica}</li>`)
-              .join("")}
-          </ul>
-
-          <button
-            class="btn-primary room-reserve"
-            data-room="${habitacion.id}">
-            Consultar y reservar
-          </button>
-        </div>
-      </article>
-    `
+        </article>
+      `;
+    }
   ).join("");
+   configurarCarruselesTarjetas();
 }
+
 
 function consultarDisponibilidad(evento) {
   evento?.preventDefault();
@@ -827,7 +1042,48 @@ function configurarEventos() {
     if (modalACerrar) {
       cerrarModal(modalACerrar);
     }
+  const flechaAnterior = evento.target.closest(
+    ".room-carousel-prev"
+  );
 
+  if (flechaAnterior) {
+    moverCarruselTarjeta(
+      flechaAnterior.dataset.room,
+      -1
+    );
+
+    return;
+  }
+
+  const flechaSiguiente = evento.target.closest(
+    ".room-carousel-next"
+  );
+
+  if (flechaSiguiente) {
+    moverCarruselTarjeta(
+      flechaSiguiente.dataset.room,
+      1
+    );
+
+    return;
+  }
+
+  const puntoCarrusel = evento.target.closest(
+    ".room-carousel-dot"
+  );
+
+  if (puntoCarrusel) {
+    const carrusel = puntoCarrusel.closest(
+      ".room-image-carousel"
+    );
+
+    actualizarCarruselTarjeta(
+      carrusel,
+      Number(puntoCarrusel.dataset.index)
+    );
+
+    return;
+  }
     if (evento.target.classList.contains("room-reserve")) {
       $("#reserva").scrollIntoView();
 
