@@ -642,42 +642,70 @@ button {
 
 .services-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1px;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--line);
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  overflow: visible;
+  border: none;
+  background: transparent;
+}
+.services-grid {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    flex-wrap: wrap;
 }
 
 .service {
-  min-height: 150px;
-  padding: 24px 18px;
+  min-height: 270px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 15px;
+  overflow: hidden;
   background: var(--white);
-  text-align: left;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .service:hover {
-  background: var(--paper);
+  transform: translateY(-6px);
+  background: var(--white);
+  box-shadow: var(--shadow-soft);
 }
 
-.service span {
-  font-size: 1.45rem;
+.service img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.service:hover img {
+  transform: scale(1.04);
+}
+
+.service-info {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .service strong {
   color: var(--ink);
-  font-size: 0.91rem;
+  font-family: var(--serif);
+  font-size: 1.45rem;
+  line-height: 1.1;
 }
 
 .service small {
   color: var(--muted);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
+}
+.service-center {
+    grid-column: 2;
 }
 
 /* ========================= RESERVATION ========================= */
