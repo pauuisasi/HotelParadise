@@ -8,7 +8,7 @@
  * - Actualiza el DOM.
  * - Muestra mensajes.
  * - Guarda y lee información mediante storage.js.
- * - Llama las reglas de negocio de reservas.js.
+ * - Llama las reglas de negocio de   reservas.js.
  */
 
 import {
