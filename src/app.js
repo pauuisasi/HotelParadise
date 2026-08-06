@@ -1222,7 +1222,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 L.marker([latitud, longitud])
     .addTo(mapa)
     .bindPopup(`
-        <strong>Hotel Business</strong><br>
+        <strong>Hotel Las Gaviotas</strong><br>
         Estamos ubicados aquí.
     `)
     .openPopup();

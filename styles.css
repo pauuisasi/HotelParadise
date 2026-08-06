@@ -276,7 +276,7 @@ button {
   align-items: center;
   isolation: isolate;
   overflow: hidden;
-  background: url("assets/images/portadaa.jfif") center / cover no-repeat;
+  background: url("assets/images/fondo.png") center / cover no-repeat;
 }
 
 .hero::before {
