@@ -1,14 +1,6 @@
 /*
  * src/app.js
  * Interacción con la página.
- *
- * Este archivo:
- * - Escucha eventos.
- * - Lee inputs.
- * - Actualiza el DOM.
- * - Muestra mensajes.
- * - Guarda y lee información mediante storage.js.
- * - Llama las reglas de negocio de   reservas.js.
  */
 
 import {

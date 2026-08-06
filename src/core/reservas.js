@@ -1,13 +1,6 @@
 /*
  * src/core/reservas.js
  * Lógica pura del sistema de reservas.
- *
- * Este archivo:
- * - No usa document.
- * - No modifica el DOM.
- * - No muestra alertas.
- * - No depende directamente de localStorage.
- * - Recibe datos, aplica reglas y devuelve resultados.
  */
 
 
