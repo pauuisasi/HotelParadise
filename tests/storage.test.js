@@ -168,21 +168,13 @@ describe("inicializarDatos", () => {
     expect(reservas).toEqual([]);
   });
 
-  test("crea los comentarios iniciales", () => {
-    inicializarDatos();
+  test("crea una lista vacía de comentarios", () => {
+  inicializarDatos();
 
-    const comentarios = leerJSON(KEYS.comments);
+  const comentarios = leerJSON(KEYS.comments);
 
-    expect(comentarios).toHaveLength(2);
-
-    expect(comentarios[0].name).toBe(
-      "María González"
-    );
-
-    expect(comentarios[1].name).toBe(
-      "Juan Pérez"
-    );
-  });
+  expect(comentarios).toEqual([]);
+});
 
   test("no sobrescribe usuarios existentes", () => {
     const usuariosExistentes = [

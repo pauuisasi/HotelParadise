@@ -57,17 +57,6 @@ export function inicializarDatos() {
   }
 
   if (!localStorage.getItem(KEYS.comments)) {
-    guardarJSON(KEYS.comments, [
-      {
-        name: "María González",
-        rating: 5,
-        text: "Excelente atención y habitaciones impecables."
-      },
-      {
-        name: "Juan Pérez",
-        rating: 4,
-        text: "Muy buena ubicación y servicios."
-      }
-    ]);
-  }
+  guardarJSON(KEYS.comments, []);
+}
 }

@@ -540,11 +540,16 @@ function confirmarReserva(evento) {
   reservas.push(nuevaReserva);
   guardarJSON(KEYS.reservations, reservas);
 
-  mostrarMensaje(
-    "bookingMessage",
-    `Reserva realizada correctamente. Código: ${nuevaReserva.id}`,
-    "success"
-  );
+ consultarDisponibilidad();
+
+cerrarModal("bookingModal");
+
+renderizarMisReservas();
+
+$("#reservationSuccessCode").textContent = nuevaReserva.id;
+
+$("#reservationSuccessModal").classList.add("show");
+$("#reservationSuccessModal").setAttribute("aria-hidden", "false");
 
   consultarDisponibilidad();
 
@@ -553,6 +558,21 @@ function confirmarReserva(evento) {
     renderizarMisReservas();
     mostrarToast("Reserva registrada correctamente.");
   }, 1000);
+}
+
+function usuarioSeAlojo(usuario) {
+  if (!usuario || usuario.role !== "client") {
+    return false;
+  }
+
+  const reservas = leerJSON(KEYS.reservations);
+  const hoy = fechaActualISO();
+
+  return reservas.some((reserva) =>
+    reserva.userId === usuario.id &&
+    reserva.status !== "Cancelada" &&
+    reserva.checkOut < hoy
+  );
 }
 
 function renderizarComentarios() {
@@ -573,36 +593,61 @@ function renderizarComentarios() {
     `
   ).join("");
 }
-
 function publicarComentario(evento) {
   evento.preventDefault();
 
   const usuario = usuarioActual();
 
-  if (usuario?.role === "admin") {
+  if (!usuario) {
     mostrarToast(
-      "Los administradores no pueden publicar comentarios."
+      "Debes iniciar sesión para publicar una opinión."
     );
     return;
   }
 
-  const nombre = $("#commentName").value.trim();
+  if (usuario.role !== "client") {
+    mostrarToast(
+      "Solo los huéspedes pueden publicar opiniones."
+    );
+    return;
+  }
+
+  if (!usuarioSeAlojo(usuario)) {
+    mostrarToast(
+      "Solo pueden publicar opiniones los huéspedes que ya se hayan alojado."
+    );
+    return;
+  }
+
   const texto = $("#commentText").value.trim();
   const puntuacion = Number($("#commentRating").value);
 
-  if (!nombre || !texto) {
+  if (!texto) {
     mostrarMensaje(
       "commentMessage",
-      "Complete todos los campos.",
+      "Debe escribir un comentario.",
       "error"
     );
     return;
   }
 
   const comentarios = leerJSON(KEYS.comments);
+  const yaComento = comentarios.some(
+  (comentario) => comentario.userId === usuario.id
+);
+
+if (yaComento) {
+  mostrarMensaje(
+    "commentMessage",
+    "Ya publicaste una opinión sobre tu estadía.",
+    "error"
+  );
+  return;
+}
 
   comentarios.unshift({
-    name: nombre,
+    userId: usuario.id,
+    name: usuario.name,
     rating: puntuacion,
     text: texto
   });
@@ -725,6 +770,19 @@ function salir() {
 
 function actualizarInterfazSesion() {
   const usuario = usuarioActual();
+  const puedeVerOpiniones = usuarioSeAlojo(usuario);
+
+  $("#opinionsMenuItem")?.classList.toggle(
+    "hidden",
+    !puedeVerOpiniones
+  );
+
+  $("#comentarios")?.classList.toggle(
+    "hidden",
+    !puedeVerOpiniones
+  );
+
+  $("#loginOpen").classList.toggle("hidden", Boolean(usuario));
 
   $("#loginOpen").classList.toggle("hidden", Boolean(usuario));
   $("#logoutBtn").classList.toggle("hidden", !usuario);
@@ -749,11 +807,7 @@ function actualizarInterfazSesion() {
     });
 
   // Deshabilitar formulario de comentarios para administradores
-  $("#commentForm")
-    ?.querySelectorAll("input, select, textarea, button")
-    .forEach((elemento) => {
-      elemento.disabled = esAdministrador;
-    });
+  
 
   $("#adminBookingNotice")?.classList.toggle(
     "hidden",
@@ -857,30 +911,146 @@ function renderizarMisReservas() {
 }
 
 function renderizarReservasAdministracion() {
+
   const textoBusqueda =
-    $("#adminReservationSearch")?.value.toLowerCase() || "";
+    $("#adminReservationSearch")?.value.toLowerCase().trim() || "";
 
   const filtroEstado =
     $("#adminStatusFilter")?.value || "";
 
+  const filtroLlegada =
+    $("#adminArrivalFilter")?.value || "";
+
+  const filtroSalida =
+    $("#adminDepartureFilter")?.value || "";
+
+  const filtroHabitacion =
+    $("#adminRoomFilter")?.value || "";
+
+
+  // Fecha actual en formato YYYY-MM-DD
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  const hoyTexto =
+    `${hoy.getFullYear()}-${String(hoy.getMonth() + 1).padStart(2, "0")}-${String(hoy.getDate()).padStart(2, "0")}`;
+
+
   const reservas = leerJSON(KEYS.reservations)
+
+    // Mostrar únicamente reservas desde hoy en adelante
     .filter((reserva) =>
-      (
-        !textoBusqueda ||
-        reserva.id.toLowerCase().includes(textoBusqueda) ||
-        reserva.clientName.toLowerCase().includes(textoBusqueda)
-      ) &&
-      (
-        !filtroEstado ||
-        reserva.status === filtroEstado
-      )
+      reserva.checkIn >= hoyTexto
+    )
+
+    // Buscar por código o cliente
+    .filter((reserva) =>
+      !textoBusqueda ||
+      reserva.id.toLowerCase().includes(textoBusqueda) ||
+      reserva.clientName.toLowerCase().includes(textoBusqueda)
+    )
+
+    // Estado
+    .filter((reserva) =>
+      !filtroEstado ||
+      reserva.status === filtroEstado
+    )
+
+    // Fecha de llegada
+    .filter((reserva) =>
+      !filtroLlegada ||
+      reserva.checkIn === filtroLlegada
+    )
+
+    // Fecha de salida
+    .filter((reserva) =>
+      !filtroSalida ||
+      reserva.checkOut === filtroSalida
+    )
+
+    // Tipo de habitación
+    .filter((reserva) =>
+      !filtroHabitacion ||
+      reserva.roomName === filtroHabitacion
+    )
+
+    // Ordenar por próxima llegada
+    .sort((a, b) =>
+      a.checkIn.localeCompare(b.checkIn)
     );
 
+
   $("#adminReservationsList").innerHTML = reservas.length
-    ? reservas.map(
-        (reserva) => crearHTMLReserva(reserva, true)
-      ).join("")
-    : "<p>No hay reservas registradas.</p>";
+
+    ? reservas.map((reserva) => {
+
+        const botonCancelar =
+          reserva.status !== "Cancelada"
+            ? `
+              <button
+                class="btn-small btn-danger cancel-reservation"
+                data-id="${reserva.id}"
+              >
+                Cancelar
+              </button>
+            `
+            : "—";
+
+        return `
+          <tr>
+
+            <td>
+              <strong>${reserva.id}</strong>
+            </td>
+
+            <td>
+              ${escaparHTML(reserva.clientName)}
+            </td>
+
+            <td>
+              ${reserva.roomName}
+            </td>
+
+            <td>
+              ${reserva.checkIn}
+            </td>
+
+            <td>
+              ${reserva.checkOut}
+            </td>
+
+            <td>
+              ${reserva.guests}
+            </td>
+
+            <td>
+              USD ${reserva.total}
+            </td>
+
+            <td>
+              <span
+                class="status status-${reserva.status.toLowerCase()}"
+              >
+                ${reserva.status}
+              </span>
+            </td>
+
+            <td>
+              ${botonCancelar}
+            </td>
+
+          </tr>
+        `;
+
+      }).join("")
+
+    : `
+      <tr>
+        <td colspan="9" class="admin-empty">
+          No se encontraron reservas para los filtros seleccionados.
+        </td>
+      </tr>
+    `;
 }
 
 function cambiarEstadoReserva(id, nuevoEstado) {
@@ -1068,11 +1238,29 @@ function configurarEventos() {
     "change",
     renderizarReservasAdministracion
   );
+  $("#adminArrivalFilter").addEventListener(
+  "change",
+  renderizarReservasAdministracion
+);
+
+$("#adminDepartureFilter").addEventListener(
+  "change",
+  renderizarReservasAdministracion
+);
+
+$("#adminRoomFilter").addEventListener(
+  "change",
+  renderizarReservasAdministracion
+);
 
   $("#occupancyForm").addEventListener(
     "submit",
     consultarOcupacion
   );
+  $("#closeReservationSuccess").addEventListener("click", () => {
+  $("#reservationSuccessModal").classList.remove("show");
+  $("#reservationSuccessModal").setAttribute("aria-hidden", "true");
+});
 
   document.addEventListener("click", (evento) => {
     const modalACerrar = evento.target.dataset.close;
