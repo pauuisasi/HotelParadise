@@ -1206,26 +1206,7 @@ document.addEventListener(
   "DOMContentLoaded",
   iniciarAplicacion
 );
-// Coordenadas
-const latitud = -34.90368449315336;
-const longitud = -56.190495772745855;
 
-// Crear mapa
-const mapa = L.map("mapa").setView([latitud, longitud], 16);
-
-// Cargar mapa
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap"
-}).addTo(mapa);
-
-// Agregar marcador
-L.marker([latitud, longitud])
-    .addTo(mapa)
-    .bindPopup(`
-        <strong>Hotel Las Gaviotas</strong><br>
-        Estamos ubicados aquí.
-    `)
-    .openPopup();
 
 
 const navLinks = document.getElementById("navLinks");
