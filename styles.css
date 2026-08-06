@@ -1260,6 +1260,39 @@ footer p {
   transform: translateY(0);
 }
 
+/* =========================================
+   OPCIONES DE SESIÓN - MENÚ MÓVIL
+========================================= */
+
+.mobile-menu-item {
+  display: none;
+}
+
+.mobile-menu-button {
+  width: 100%;
+  padding: 10px 0;
+
+  border: none;
+  background: transparent;
+
+  color: var(--ink-soft);
+
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.mobile-menu-button:hover {
+  color: var(--ink);
+}
+
+.mobile-logout {
+  color: var(--danger);
+}
+
 /* ========================= RESPONSIVE ========================= */
 
 @media (max-width: 1050px) {
@@ -1314,6 +1347,14 @@ footer p {
   .service-groups {
     grid-template-columns: 1fr;
   }
+  .mobile-menu-item {
+  display: block;
+  width: 100%;
+}
+
+.mobile-menu-item.hidden {
+  display: none !important;
+}
 }
 
 @media (max-width: 700px) {
@@ -1590,3 +1631,4 @@ footer p {
     bottom: 12px;
   }
 } 
+

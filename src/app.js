@@ -1226,3 +1226,119 @@ L.marker([latitud, longitud])
         Estamos ubicados aquí.
     `)
     .openPopup();
+
+
+const navLinks = document.getElementById("navLinks");
+const menuToggle = document.getElementById("menuToggle");
+
+const loginOpen = document.getElementById("loginOpen");
+const myReservationsOpen =
+  document.getElementById("myReservationsOpen");
+
+const adminOpen =
+  document.getElementById("adminOpen");
+
+const logoutBtn =
+  document.getElementById("logoutBtn");
+
+const mobileLoginOpen = document.getElementById("mobileLoginOpen");
+const mobileRegisterOpen = document.getElementById("mobileRegisterOpen");
+const mobileMyReservationsOpen = document.getElementById(
+  "mobileMyReservationsOpen"
+);
+const mobileAdminOpen = document.getElementById("mobileAdminOpen");
+const mobileLogoutBtn = document.getElementById("mobileLogoutBtn");
+
+const mobileReservationsItem = document.getElementById(
+  "mobileReservationsItem"
+);
+const mobileAdminItem = document.getElementById("mobileAdminItem");
+const mobileLogoutItem = document.getElementById("mobileLogoutItem");
+
+
+function cerrarMenuMovil() {
+  navLinks.classList.remove("open");
+  menuToggle.setAttribute("aria-expanded", "false");
+}
+
+mobileLoginOpen.addEventListener("click", () => {
+  loginOpen.click();
+  cerrarMenuMovil();
+});
+
+mobileRegisterOpen.addEventListener("click", () => {
+  loginOpen.click();
+
+  const registerTab = document.querySelector(
+    '[data-auth-tab="register"]'
+  );
+
+  if (registerTab) {
+    registerTab.click();
+  }
+
+  cerrarMenuMovil();
+});
+
+mobileMyReservationsOpen.addEventListener("click", () => {
+  myReservationsOpen.click();
+  cerrarMenuMovil();
+});
+
+mobileAdminOpen.addEventListener("click", () => {
+  adminOpen.click();
+  cerrarMenuMovil();
+});
+
+mobileLogoutBtn.addEventListener("click", () => {
+  logoutBtn.click();
+  cerrarMenuMovil();
+});
+
+function actualizarMenuMovil() {
+  const loginVisible = !loginOpen.classList.contains("hidden");
+  const reservasVisible =
+    !myReservationsOpen.classList.contains("hidden");
+  const adminVisible = !adminOpen.classList.contains("hidden");
+  const logoutVisible = !logoutBtn.classList.contains("hidden");
+
+  mobileLoginOpen.parentElement.classList.toggle(
+    "hidden",
+    !loginVisible
+  );
+
+  mobileRegisterOpen.parentElement.classList.toggle(
+    "hidden",
+    !loginVisible
+  );
+
+  mobileReservationsItem.classList.toggle(
+    "hidden",
+    !reservasVisible
+  );
+
+  mobileAdminItem.classList.toggle(
+    "hidden",
+    !adminVisible
+  );
+
+  mobileLogoutItem.classList.toggle(
+    "hidden",
+    !logoutVisible
+  );
+}
+
+const observerMenu = new MutationObserver(() => {
+  actualizarMenuMovil();
+});
+
+[loginOpen, myReservationsOpen, adminOpen, logoutBtn].forEach(
+  (elemento) => {
+    observerMenu.observe(elemento, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+  }
+);
+
+actualizarMenuMovil();

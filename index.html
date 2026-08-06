@@ -1,484 +1,433 @@
 <!doctype html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Sistema web de reservas del Hotel Las Gaviotas"
-    />
-    <title>Hotel Las Gaviotas | Reservas</title>
-    <link rel="stylesheet" href="styles.css" />
-    <script type="module" src="src/app.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  </head>
-  <body>
-    <header class="header">
-      <nav class="navbar" aria-label="Navegación principal">
-        <a class="logo" href="#inicio"
-          ><span aria-hidden="true">🏨</span> Hotel Las Gaviotas</a
-        >
-        <button
-          class="menu-toggle"
-          id="menuToggle"
-          aria-label="Abrir menú"
-          aria-expanded="false"
-        >
-          ☰
-        </button>
-        <ul class="nav-links" id="navLinks">
-          <li><a href="#hotel">Hotel</a></li>
-          <li><a href="#habitaciones">Habitaciones</a></li>
-          <li><a href="#servicios">Servicios</a></li>
-          <li><a href="#reserva">Disponibilidad</a></li>
-          <li><a href="#comentarios">Opiniones</a></li>
-          <li><a href="#contacto">Contacto</a></li>
-        </ul>
-        <div class="nav-buttons">
-          <button class="btn-link" id="loginOpen">Iniciar sesión</button>
-          <button class="btn-secondary hidden" id="myReservationsOpen">
-            Mis reservas
-          </button>
-          <button class="btn-secondary hidden" id="adminOpen">
-            Administración
-          </button>
-          <button class="btn-link hidden" id="logoutBtn">Salir</button>
-          <a class="btn-primary" href="#reserva">Reservar</a>
-        </div>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sistema web de reservas del Hotel Las Gaviotas" />
+  <title>Hotel Las Gaviotas | Reservas</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="src/app.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <main>
-      <section id="inicio" class="hero">
-        <div class="hero-content">
-          <span class="eyebrow">Tu próxima estadía comienza aquí</span>
-          <h1>Disfrutá una experiencia única</h1>
-          <p>
-            Conocé nuestras habitaciones, verificá la disponibilidad y registrá
-            tu reserva de forma rápida y segura.
-          </p>
-          <div class="hero-actions">
-            <a class="btn-primary btn-large" href="#reserva">Reserva rápida</a>
-            <a class="btn-outline-light btn-large" href="#habitaciones"
-              >Ver habitaciones</a
-            >
-          </div>
-        </div>
-      </section>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
 
-      <section id="hotel" class="section">
-        <div class="section-heading">
-          <span class="eyebrow dark">Conocer el hotel</span>
-          <h2>Todo lo necesario para una estadía inolvidable</h2>
-          <p>
-            Hotel Las Gaviotas combina comodidad, buena ubicación y atención
-            personalizada durante las 24 horas.
-          </p>
-        </div>
-        <div class="hotel-grid">
-          <article class="card">
-            <span class="card-icon">📍</span>
+<body>
+  <header class="header">
+    <nav class="navbar" aria-label="Navegación principal">
+      <a class="logo" href="#inicio"><span aria-hidden="true">🏨</span> Hotel Las Gaviotas</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">
+        ☰
+      </button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#hotel">Hotel</a></li>
+        <li><a href="#habitaciones">Habitaciones</a></li>
+        <li><a href="#servicios">Servicios</a></li>
+        <li><a href="#reserva">Disponibilidad</a></li>
+        <li><a href="#comentarios">Opiniones</a></li>
+        <li><a href="#contacto">Contacto</a></li>
 
-            <h3>Ubicación privilegiada</h3>
-
-            <p>
-              Cerca de los principales atractivos turísticos y con fácil acceso
-              al transporte.
-            </p>
-
-            <a href="#ubicacion" class="location-link">
-              Ver ubicación exacta →
-            </a>
-          </article>
-          <article class="card">
-            <span class="card-icon">✨</span>
-            <h3>Experiencia premium</h3>
-            <p>Ambientes modernos, cómodos y pensados para el descanso.</p>
-          </article>
-          <article class="card">
-            <span class="card-icon">🛎️</span>
-            <h3>Atención 24/7</h3>
-            <p>
-              Nuestro equipo está disponible para ayudarte durante toda tu
-              estadía.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section id="habitaciones" class="section section-alt">
-        <div class="section-heading">
-          <span class="eyebrow dark">Habitaciones</span>
-          <h2>Elegí la opción ideal para tu viaje</h2>
-          <p>
-            Las tarifas se expresan por noche. La reserva web se registra sin
-            solicitar tarjeta. Se abona en el Hotel.
-          </p>
-        </div>
-        <div class="rooms" id="roomsContainer"></div>
-      </section>
-
-      <section id="servicios" class="section">
-        <div class="section-heading">
-          <span class="eyebrow dark">Servicios</span>
-          <h2>Comodidades incluidas y adicionales</h2>
-        </div>
-
-        <div class="service-groups">
-          <!-- Servicios incluidos -->
-          <article class="service-panel">
-            <h3>Incluidos en la estadía</h3>
-
-            <div class="services-grid">
-              <div class="service">
-                <img
-                  src="assets/images/WifiGaviotas.png"
-                  alt="Huésped utilizando el wifi del hotel"
-                />
-                <div class="service-info">
-                  <strong>Wifi</strong>
-                  <small>Incluido</small>
-                </div>
-              </div>
-
-              <div class="service">
-                <img
-                  src="assets/images/Piscina.jpeg"
-                  alt="Piscina del Hotel Las Gaviotas"
-                />
-                <div class="service-info">
-                  <strong>Piscina</strong>
-                  <small>Incluido</small>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- Servicios adicionales -->
-          <article class="service-panel">
-            <h3>Con costo adicional</h3>
-
-            <div class="services-grid">
-              <div class="service">
-                <img
-                  src="assets/images/ParkingGaviotas.png"
-                  alt="Parking privado del Hotel Las Gaviotas"
-                />
-                <div class="service-info">
-                  <strong>Parking</strong>
-                  <small>USD 35</small>
-                </div>
-              </div>
-
-              <div class="service">
-                <img
-                  src="assets/images/DesayunoGaviotas.png"
-                  alt="Desayuno servido en el comedor del hotel"
-                />
-                <div class="service-info">
-                  <strong>Desayuno</strong>
-                  <small>USD 40 por persona</small>
-                </div>
-              </div>
-
-              
-              <div class="service service-center">
-                <img src="assets/images/TrasladoGaviota.png" alt="Traslado" />
-                <div class="service-info">
-                  <strong>Traslado</strong>
-                  <small>USD 45 por tramo</small>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="reserva" class="section section-reservation">
-        <div class="section-heading">
-          <span class="eyebrow">Reserva rápida</span>
-          <h2>Consultá la disponibilidad</h2>
-          <p>
-            Ingresá las fechas y la cantidad de huéspedes. El sistema evita
-            fechas inválidas y reservas superpuestas.
-          </p>
-          <p
-            id="adminBookingNotice"
-            class="feedback hidden">
-            Las reservas deben ser realizadas por clientes registrados.
-          </p>
-        </div>
-        <form class="reservation-form" id="availabilityForm" novalidate>
-          <label>Ingreso<input type="date" id="checkIn" required /></label>
-          <label>Salida<input type="date" id="checkOut" required /></label>
-          <label
-            >Huéspedes
-            <select id="guests" required>
-              <option value="1">1 huesped</option>
-              <option value="2">2 huéspedes</option>
-              <option value="3">3 huéspedes</option>
-            </select>
-          </label>
-          <button type="submit" class="btn-primary">Buscar habitaciones</button>
-        </form>
-        <div id="availabilityMessage" class="feedback" aria-live="polite"></div>
-        <div id="availabilityResults" class="availability-results"></div>
-      </section>
-
-      <section id="comentarios" class="section">
-        <div class="section-heading">
-          <span class="eyebrow dark">Opiniones</span>
-          <h2>Experiencias de nuestros huéspedes</h2>
-        </div>
-        <div class="comments-layout">
-          <div class="comments" id="commentsList"></div>
-          <form class="comment-form card" id="commentForm">
-            <h3>Dejá tu opinión</h3>
-            <label
-              >Nombre<input
-                id="commentName"
-                type="text"
-                maxlength="60"
-                required
-            /></label>
-            <label
-              >Puntuación
-              <select id="commentRating" required>
-                <option value="5">5 estrellas</option>
-                <option value="4">4 estrellas</option>
-                <option value="3">3 estrellas</option>
-                <option value="2">2 estrellas</option>
-                <option value="1">1 estrella</option>
-              </select>
-            </label>
-            <label
-              >Comentario<textarea
-                id="commentText"
-                rows="5"
-                maxlength="300"
-                required
-              ></textarea>
-            </label>
-            <button class="btn-primary" type="submit">
-              Publicar comentario
-            </button>
-            <div id="commentMessage" class="feedback" aria-live="polite"></div>
-          </form>
-        </div>
-      </section>
-
-      <section id="contacto" class="section section-alt">
-        <div class="section-heading">
-          <span class="eyebrow dark">Contacto</span>
-          <h2>Estamos para ayudarte</h2>
-        </div>
-        <div class="contact-grid">
-          <article class="card contact-card">
-            <span>✉️</span>
-            <h3>Email</h3>
-            <p>hotel@lasGaviotas.com</p>
-          </article>
-          <article class="card contact-card">
-            <span>📞</span>
-            <h3>Teléfono</h3>
-            <p>+598 1234 5678</p>
-          </article>
-          <article class="card contact-card">
-            <span>🕑</span>
-            <h3>Horarios</h3>
-            <p>Check-in: 14:00<br />Check-out: 11:00</p>
-          </article>
-          <article class="card contact-card">
-            <span>📱</span>
-            <h3>Redes</h3>
-            <p>@hotelLasGaviotas</p>
-          </article>
-        </div>
-        <section id="ubicacion" class="ubicacion">
-          <span class="icono">📍</span>
-
-          <h2>Nuestra ubicación</h2>
-
-          <div id="mapa"></div>
-
-          <h3>Hotel Las Gaviotas</h3>
-          <p>Montevideo, Uruguay</p>
-        </section>
-      </section>
-    </main>
-
-    <footer>
-      <div>
-        <strong>🏨 Hotel Las Gaviotas</strong>
-        <p>Una experiencia pensada para vos.</p>
-      </div>
-      <p>© 2026 Hotel Las Gaviotas.</p>
-    </footer>
-
-    <!-- Modal de autenticación -->
-    <div class="modal" id="authModal" aria-hidden="true">
-      <div class="modal-dialog">
-        <button class="modal-close" data-close="authModal" aria-label="Cerrar">
-          ×
-        </button>
-        <div class="tabs">
-          <button class="tab active" data-auth-tab="login">
+        <!--  menú celular -->
+        <li class="mobile-menu-item">
+          <button class="mobile-menu-button" id="mobileLoginOpen">
             Iniciar sesión
           </button>
-          <button class="tab" data-auth-tab="register">Registrarse</button>
+        </li>
+
+        <li class="mobile-menu-item">
+          <button class="mobile-menu-button" id="mobileRegisterOpen">
+            Registrarse
+          </button>
+        </li>
+
+        <li class="mobile-menu-item hidden" id="mobileReservationsItem">
+          <button class="mobile-menu-button" id="mobileMyReservationsOpen">
+            Mis reservas
+          </button>
+        </li>
+
+        <li class="mobile-menu-item hidden" id="mobileAdminItem">
+          <button class="mobile-menu-button" id="mobileAdminOpen">
+            Administración
+          </button>
+        </li>
+
+        <li class="mobile-menu-item hidden" id="mobileLogoutItem">
+          <button class="mobile-menu-button mobile-logout" id="mobileLogoutBtn">
+            Salir
+          </button>
+        </li>
+      </ul>
+      <div class="nav-buttons">
+        <button class="btn-link" id="loginOpen">Iniciar sesión</button>
+        <button class="btn-secondary hidden" id="myReservationsOpen">
+          Mis reservas
+        </button>
+        <button class="btn-secondary hidden" id="adminOpen">
+          Administración
+        </button>
+        <button class="btn-link hidden" id="logoutBtn">Salir</button>
+        <a class="btn-primary" href="#reserva">Reservar</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="inicio" class="hero">
+      <div class="hero-content">
+        <span class="eyebrow">Tu próxima estadía comienza aquí</span>
+        <h1>Disfrutá una experiencia única</h1>
+        <p>
+          Conocé nuestras habitaciones, verificá la disponibilidad y registrá
+          tu reserva de forma rápida y segura.
+        </p>
+        <div class="hero-actions">
+          <a class="btn-primary btn-large" href="#reserva">Reserva rápida</a>
+          <a class="btn-outline-light btn-large" href="#habitaciones">Ver habitaciones</a>
         </div>
-        <form id="loginForm" class="modal-form">
-          <h2>Iniciar sesión</h2>
-          <label>Email<input type="email" id="loginEmail" required /></label>
-          <label
-            >Contraseña<input
-              type="password"
-              id="loginPassword"
-              minlength="4"
-              required
-          /></label>
-          <button class="btn-primary" type="submit">Ingresar</button>
-          <p class="demo-note">
-            Personal de prueba: <strong>admin@lasGaviotas.com</strong> /
-            <strong>admin</strong>
-          </p>
-          <div id="loginMessage" class="feedback"></div>
-        </form>
-        <form id="registerForm" class="modal-form hidden">
-          <h2>Crear cuenta</h2>
-          <label
-            >Nombre completo<input type="text" id="registerName" required
-          /></label>
-          <label
-            >Documento<input type="text" id="registerDocument" required
-          /></label>
-          <label>Email<input type="email" id="registerEmail" required /></label>
-          <label
-            >Teléfono<input type="tel" id="registerPhone" required
-          /></label>
-          <label
-            >Contraseña<input
-              type="password"
-              id="registerPassword"
-              minlength="4"
-              required
-          /></label>
-          <button class="btn-primary" type="submit">Registrarme</button>
-          <div id="registerMessage" class="feedback"></div>
-        </form>
       </div>
-    </div>
+    </section>
 
-    <!-- Modal para confirmar la reserva -->
-    <div class="modal" id="bookingModal" aria-hidden="true">
-      <div class="modal-dialog">
-        <button
-          class="modal-close"
-          data-close="bookingModal"
-          aria-label="Cerrar"
-        >
-          ×
-        </button>
-        <h2>Confirmar reserva</h2>
-        <div id="bookingSummary" class="summary-box"></div>
-        <form id="bookingForm" class="modal-form">
-          <label
-            >Servicios adicionales
-            <span class="checkbox-row"
-              ><input type="checkbox" id="serviceParking" /> Parking — USD
-              35</span
-            >
-            <span class="checkbox-row"
-              ><input type="checkbox" id="serviceBreakfast" /> Desayuno — USD 40
-              por huésped/noche</span
-            >
-            <span class="checkbox-row"
-              ><input type="checkbox" id="serviceTransfer" /> Traslado — USD 45
-              por tramo</span
-            >
+    <section id="hotel" class="section">
+      <div class="section-heading">
+        <span class="eyebrow dark">Conocer el hotel</span>
+        <h2>Todo lo necesario para una estadía inolvidable</h2>
+        <p>
+          Hotel Las Gaviotas combina comodidad, buena ubicación y atención
+          personalizada durante las 24 horas.
+        </p>
+      </div>
+      <div class="hotel-grid">
+        <article class="card">
+          <span class="card-icon">📍</span>
+
+          <h3>Ubicación privilegiada</h3>
+
+          <p>
+            Cerca de los principales atractivos turísticos y con fácil acceso
+            al transporte.
+          </p>
+
+          <a href="#ubicacion" class="location-link">
+            Ver ubicación exacta →
+          </a>
+        </article>
+        <article class="card">
+          <span class="card-icon">✨</span>
+          <h3>Experiencia premium</h3>
+          <p>Ambientes modernos, cómodos y pensados para el descanso.</p>
+        </article>
+        <article class="card">
+          <span class="card-icon">🛎️</span>
+          <h3>Atención 24/7</h3>
+          <p>
+            Nuestro equipo está disponible para ayudarte durante toda tu
+            estadía.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="habitaciones" class="section section-alt">
+      <div class="section-heading">
+        <span class="eyebrow dark">Habitaciones</span>
+        <h2>Elegí la opción ideal para tu viaje</h2>
+        <p>
+          Las tarifas se expresan por noche. La reserva web se registra sin
+          solicitar tarjeta. Se abona en el Hotel.
+        </p>
+      </div>
+      <div class="rooms" id="roomsContainer"></div>
+    </section>
+
+    <section id="servicios" class="section">
+      <div class="section-heading">
+        <span class="eyebrow dark">Servicios</span>
+        <h2>Comodidades incluidas y adicionales</h2>
+      </div>
+
+      <div class="service-groups">
+        <!-- Servicios incluidos -->
+        <article class="service-panel">
+          <h3>Incluidos en la estadía</h3>
+
+          <div class="services-grid">
+            <div class="service">
+              <img src="assets/images/WifiGaviotas.png" alt="Huésped utilizando el wifi del hotel" />
+              <div class="service-info">
+                <strong>Wifi</strong>
+                <small>Incluido</small>
+              </div>
+            </div>
+
+            <div class="service">
+              <img src="assets/images/Piscina.jpeg" alt="Piscina del Hotel Las Gaviotas" />
+              <div class="service-info">
+                <strong>Piscina</strong>
+                <small>Incluido</small>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Servicios adicionales -->
+        <article class="service-panel">
+          <h3>Con costo adicional</h3>
+
+          <div class="services-grid">
+            <div class="service">
+              <img src="assets/images/ParkingGaviotas.png" alt="Parking privado del Hotel Las Gaviotas" />
+              <div class="service-info">
+                <strong>Parking</strong>
+                <small>USD 35</small>
+              </div>
+            </div>
+
+            <div class="service">
+              <img src="assets/images/DesayunoGaviotas.png" alt="Desayuno servido en el comedor del hotel" />
+              <div class="service-info">
+                <strong>Desayuno</strong>
+                <small>USD 40 por persona</small>
+              </div>
+            </div>
+
+            <div class="service service-center">
+              <img src="assets/images/TrasladoGaviota.png" alt="Traslado" />
+              <div class="service-info">
+                <strong>Traslado</strong>
+                <small>USD 45 por tramo</small>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="reserva" class="section section-reservation">
+      <div class="section-heading">
+        <span class="eyebrow">Reserva rápida</span>
+        <h2>Consultá la disponibilidad</h2>
+        <p>
+          Ingresá las fechas y la cantidad de huéspedes. El sistema evita
+          fechas inválidas y reservas superpuestas.
+        </p>
+        <p id="adminBookingNotice" class="feedback hidden">
+          Las reservas deben ser realizadas por clientes registrados.
+        </p>
+      </div>
+      <form class="reservation-form" id="availabilityForm" novalidate>
+        <label>Ingreso<input type="date" id="checkIn" required /></label>
+        <label>Salida<input type="date" id="checkOut" required /></label>
+        <label>Huéspedes
+          <select id="guests" required>
+            <option value="1">1 huesped</option>
+            <option value="2">2 huéspedes</option>
+            <option value="3">3 huéspedes</option>
+          </select>
+        </label>
+        <button type="submit" class="btn-primary">Buscar habitaciones</button>
+      </form>
+      <div id="availabilityMessage" class="feedback" aria-live="polite"></div>
+      <div id="availabilityResults" class="availability-results"></div>
+    </section>
+
+    <section id="comentarios" class="section">
+      <div class="section-heading">
+        <span class="eyebrow dark">Opiniones</span>
+        <h2>Experiencias de nuestros huéspedes</h2>
+      </div>
+      <div class="comments-layout">
+        <div class="comments" id="commentsList"></div>
+        <form class="comment-form card" id="commentForm">
+          <h3>Dejá tu opinión</h3>
+          <label>Nombre<input id="commentName" type="text" maxlength="60" required /></label>
+          <label>Puntuación
+            <select id="commentRating" required>
+              <option value="5">5 estrellas</option>
+              <option value="4">4 estrellas</option>
+              <option value="3">3 estrellas</option>
+              <option value="2">2 estrellas</option>
+              <option value="1">1 estrella</option>
+            </select>
           </label>
-          <p class="policy">
-            La reserva se registra sin pago. Las cancelaciones con menos de 3
-            noches de anticipación pueden tener cargo.
-          </p>
-          <button class="btn-primary" type="submit">Confirmar reserva</button>
-          <div id="bookingMessage" class="feedback"></div>
+          <label>Comentario<textarea id="commentText" rows="5" maxlength="300" required></textarea>
+          </label>
+          <button class="btn-primary" type="submit">
+            Publicar comentario
+          </button>
+          <div id="commentMessage" class="feedback" aria-live="polite"></div>
         </form>
       </div>
-    </div>
+    </section>
 
-    <!-- Modal de reservas del cliente -->
-    <div class="modal modal-wide" id="reservationsModal" aria-hidden="true">
-      <div class="modal-dialog">
-        <button
-          class="modal-close"
-          data-close="reservationsModal"
-          aria-label="Cerrar"
-        >
-          ×
+    <section id="contacto" class="section section-alt">
+      <div class="section-heading">
+        <span class="eyebrow dark">Contacto</span>
+        <h2>Estamos para ayudarte</h2>
+      </div>
+      <div class="contact-grid">
+        <article class="card contact-card">
+          <span>✉️</span>
+          <h3>Email</h3>
+          <p>hotel@lasGaviotas.com</p>
+        </article>
+        <article class="card contact-card">
+          <span>📞</span>
+          <h3>Teléfono</h3>
+          <p>+598 1234 5678</p>
+        </article>
+        <article class="card contact-card">
+          <span>🕑</span>
+          <h3>Horarios</h3>
+          <p>Check-in: 14:00<br />Check-out: 11:00</p>
+        </article>
+        <article class="card contact-card">
+          <span>📱</span>
+          <h3>Redes</h3>
+          <p>@hotelLasGaviotas</p>
+        </article>
+      </div>
+      <section id="ubicacion" class="ubicacion">
+        <span class="icono">📍</span>
+
+        <h2>Nuestra ubicación</h2>
+
+        <div id="mapa"></div>
+
+        <h3>Hotel Las Gaviotas</h3>
+        <p>Montevideo, Uruguay</p>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>🏨 Hotel Las Gaviotas</strong>
+      <p>Una experiencia pensada para vos.</p>
+    </div>
+    <p>© 2026 Hotel Las Gaviotas.</p>
+  </footer>
+
+  <!-- Modal de autenticación -->
+  <div class="modal" id="authModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <button class="modal-close" data-close="authModal" aria-label="Cerrar">
+        ×
+      </button>
+      <div class="tabs">
+        <button class="tab active" data-auth-tab="login">
+          Iniciar sesión
         </button>
-        <h2>Mis reservas</h2>
+        <button class="tab" data-auth-tab="register">Registrarse</button>
+      </div>
+      <form id="loginForm" class="modal-form">
+        <h2>Iniciar sesión</h2>
+        <label>Email<input type="email" id="loginEmail" required /></label>
+        <label>Contraseña<input type="password" id="loginPassword" minlength="4" required /></label>
+        <button class="btn-primary" type="submit">Ingresar</button>
+        <p class="demo-note">
+          Personal de prueba: <strong>admin@lasGaviotas.com</strong> /
+          <strong>admin</strong>
+        </p>
+        <div id="loginMessage" class="feedback"></div>
+      </form>
+      <form id="registerForm" class="modal-form hidden">
+        <h2>Crear cuenta</h2>
+        <label>Nombre completo<input type="text" id="registerName" required /></label>
+        <label>Documento<input type="text" id="registerDocument" required /></label>
+        <label>Email<input type="email" id="registerEmail" required /></label>
+        <label>Teléfono<input type="tel" id="registerPhone" required /></label>
+        <label>Contraseña<input type="password" id="registerPassword" minlength="4" required /></label>
+        <button class="btn-primary" type="submit">Registrarme</button>
+        <div id="registerMessage" class="feedback"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal para confirmar la reserva -->
+  <div class="modal" id="bookingModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <button class="modal-close" data-close="bookingModal" aria-label="Cerrar">
+        ×
+      </button>
+      <h2>Confirmar reserva</h2>
+      <div id="bookingSummary" class="summary-box"></div>
+      <form id="bookingForm" class="modal-form">
+        <label>Servicios adicionales
+          <span class="checkbox-row"><input type="checkbox" id="serviceParking" /> Parking — USD
+            35</span>
+          <span class="checkbox-row"><input type="checkbox" id="serviceBreakfast" /> Desayuno — USD 40
+            por huésped/noche</span>
+          <span class="checkbox-row"><input type="checkbox" id="serviceTransfer" /> Traslado — USD 45
+            por tramo</span>
+        </label>
+        <p class="policy">
+          La reserva se registra sin pago. Las cancelaciones con menos de 3
+          noches de anticipación pueden tener cargo.
+        </p>
+        <button class="btn-primary" type="submit">Confirmar reserva</button>
+        <div id="bookingMessage" class="feedback"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de reservas del cliente -->
+  <div class="modal modal-wide" id="reservationsModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <button class="modal-close" data-close="reservationsModal" aria-label="Cerrar">
+        ×
+      </button>
+      <h2>Mis reservas</h2>
+      <div class="filter-row">
+        <input id="reservationSearch" type="search" placeholder="Buscar por código o habitación" />
+        <select id="reservationStatusFilter">
+          <option value="">Todos los estados</option>
+          <option value="Confirmada">Confirmada</option>
+          <option value="Cancelada">Cancelada</option>
+        </select>
+      </div>
+      <div id="myReservationsList"></div>
+    </div>
+  </div>
+
+  <!-- Modal administrativo -->
+  <div class="modal modal-wide" id="adminModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <button class="modal-close" data-close="adminModal" aria-label="Cerrar">
+        ×
+      </button>
+      <h2>Administración del hotel</h2>
+      <div class="admin-tabs">
+        <button class="tab active" data-admin-tab="reservations">
+          Reservas
+        </button>
+        <button class="tab" data-admin-tab="occupancy">Ocupación</button>
+      </div>
+      <section id="adminReservationsPanel">
         <div class="filter-row">
-          <input
-            id="reservationSearch"
-            type="search"
-            placeholder="Buscar por código o habitación"
-          />
-          <select id="reservationStatusFilter">
+          <input id="adminReservationSearch" type="search" placeholder="Buscar reserva o cliente" />
+          <select id="adminStatusFilter">
             <option value="">Todos los estados</option>
             <option value="Confirmada">Confirmada</option>
             <option value="Cancelada">Cancelada</option>
           </select>
         </div>
-        <div id="myReservationsList"></div>
-      </div>
-    </div>
-
-    <!-- Modal administrativo -->
-    <div class="modal modal-wide" id="adminModal" aria-hidden="true">
-      <div class="modal-dialog">
-        <button class="modal-close" data-close="adminModal" aria-label="Cerrar">
-          ×
-        </button>
-        <h2>Administración del hotel</h2>
-        <div class="admin-tabs">
-          <button class="tab active" data-admin-tab="reservations">
-            Reservas
+        <div id="adminReservationsList"></div>
+      </section>
+      <section id="adminOccupancyPanel" class="hidden">
+        <form id="occupancyForm" class="filter-row">
+          <input id="occupancyDate" type="date" required />
+          <button class="btn-primary" type="submit">
+            Consultar ocupación
           </button>
-          <button class="tab" data-admin-tab="occupancy">Ocupación</button>
-        </div>
-        <section id="adminReservationsPanel">
-          <div class="filter-row">
-            <input
-              id="adminReservationSearch"
-              type="search"
-              placeholder="Buscar reserva o cliente"
-            />
-            <select id="adminStatusFilter">
-              <option value="">Todos los estados</option>
-              <option value="Confirmada">Confirmada</option>
-              <option value="Cancelada">Cancelada</option>
-            </select>
-          </div>
-          <div id="adminReservationsList"></div>
-        </section>
-        <section id="adminOccupancyPanel" class="hidden">
-          <form id="occupancyForm" class="filter-row">
-            <input id="occupancyDate" type="date" required />
-            <button class="btn-primary" type="submit">
-              Consultar ocupación
-            </button>
-          </form>
-          <div id="occupancyResults"></div>
-        </section>
-      </div>
+        </form>
+        <div id="occupancyResults"></div>
+      </section>
     </div>
+  </div>
 
-    <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  </body>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+
 </html>

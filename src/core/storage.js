@@ -44,7 +44,7 @@ export function inicializarDatos() {
         id: "USR-ADMIN",
         name: "Personal del hotel",
         document: "00000000",
-        email: "admin@paradise.com",
+        email: "admin@lasgaviotas.com",
         phone: "",
         password: "admin",
         role: "admin"
