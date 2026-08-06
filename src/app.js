@@ -482,6 +482,13 @@ function confirmarReserva(evento) {
 
   const usuario = usuarioActual();
 
+  if (usuario?.role === "admin") {
+    mostrarToast(
+      "Los administradores no pueden realizar reservas."
+    );
+    return;
+  }
+
   if (
     !usuario ||
     !habitacionSeleccionada ||
@@ -577,6 +584,15 @@ function renderizarComentarios() {
 
 function publicarComentario(evento) {
   evento.preventDefault();
+
+  const usuario = usuarioActual();
+
+  if (usuario?.role === "admin") {
+    mostrarToast(
+      "Los administradores no pueden publicar comentarios."
+    );
+    return;
+  }
 
   const nombre = $("#commentName").value.trim();
   const texto = $("#commentText").value.trim();
@@ -730,9 +746,33 @@ function actualizarInterfazSesion() {
     "hidden",
     !usuario || usuario.role !== "admin"
   );
+
+  const esAdministrador = usuario?.role === "admin";
+
+  // Deshabilitar formulario de reserva para administradores
+  $("#availabilityForm")
+    ?.querySelectorAll("input, select, button")
+    .forEach((elemento) => {
+      elemento.disabled = esAdministrador;
+    });
+
+  // Deshabilitar formulario de comentarios para administradores
+  $("#commentForm")
+    ?.querySelectorAll("input, select, textarea, button")
+    .forEach((elemento) => {
+      elemento.disabled = esAdministrador;
+    });
+
+  $("#adminBookingNotice")?.classList.toggle(
+    "hidden",
+    !esAdministrador
+  );
 }
 
 function crearHTMLReserva(reserva, esAdministrador = false) {
+  const puedeMostrarCancelar =
+    reserva.status !== "Cancelada";
+
   return `
     <article class="reservation-item">
       <div class="reservation-item-head">
@@ -773,10 +813,9 @@ function crearHTMLReserva(reserva, esAdministrador = false) {
         </span>
       </div>
 
-      <div class="actions">
-        ${
-          esAdministrador && reserva.status !== "Cancelada"
-            ? `
+      ${
+        puedeMostrarCancelar
+          ? `
             <div class="actions">
               <button
                 class="btn-small btn-danger cancel-reservation"
@@ -784,10 +823,9 @@ function crearHTMLReserva(reserva, esAdministrador = false) {
                 Cancelar
               </button>
             </div>
-            `
-            : ""
-        }
-      </div>
+          `
+          : ""
+      }
     </article>
   `;
 }
@@ -854,6 +892,13 @@ function renderizarReservasAdministracion() {
 }
 
 function cambiarEstadoReserva(id, nuevoEstado) {
+  const usuario = usuarioActual();
+
+  if (!usuario) {
+    mostrarToast("Debe iniciar sesión.");
+    return;
+  }
+
   const reservas = leerJSON(KEYS.reservations);
   const reserva = reservas.find((item) => item.id === id);
 
@@ -870,19 +915,32 @@ function cambiarEstadoReserva(id, nuevoEstado) {
       return;
     }
 
-    const requiereAdvertencia =
+    const dentroDelPlazoConCargo =
       requiereAdvertenciaCancelacion(
         reserva.checkIn,
         fechaActualISO()
       );
 
-    const mensaje =
-      "¿Está seguro que desea cancelar la reserva?" +
-      (
-        requiereAdvertencia
-          ? "\nLa cancelación se realiza con menos de 3 noches de anticipación y puede aplicar un cargo."
-          : ""
+    if (
+      usuario.role === "client" &&
+      dentroDelPlazoConCargo
+    ) {
+      mostrarToast(
+        "No puede cancelar porque faltan menos de 3 noches para la fecha de ingreso. Comuníquese con el hotel para solicitar la cancelación."
       );
+      return;
+    }
+
+    let mensaje =
+      "¿Está seguro que desea cancelar la reserva?";
+
+    if (
+      usuario.role === "admin" &&
+      dentroDelPlazoConCargo
+    ) {
+      mensaje +=
+        "\nLa cancelación se realiza con menos de 3 noches de anticipación. Puede corresponder un cargo que deberá gestionarse manualmente.";
+    }
 
     if (!confirm(mensaje)) {
       return;
