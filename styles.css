@@ -95,6 +95,15 @@ button {
     margin:auto;
     text-align:center;
 }
+#ubicacion > .icono {
+    display: block;
+    text-align: center;
+    margin: 0 auto 15px;
+}
+
+#ubicacion > h2 {
+    text-align: center;
+}
 .location-link{
     display:inline-block;
     margin-top:15px;
